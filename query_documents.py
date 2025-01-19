@@ -57,10 +57,18 @@ def create_chain():
     Answer: Let me help you with that.
     """)
     
+    retriever_fn_vectorstore = retriever.vectorstore.similarity_search
+    retriever_fn_docstore = retriever | format_docs
+
+
+    selected_retriever_func = retriever_fn_vectorstore
+    ### NOTE - retriever.invoke calls docstore by default
+    ### calling vectorstore retrieves chunks from vectorstore
+
     # Create the chain
     chain = (
         {
-            "context": retriever | format_docs,
+            "context": selected_retriever_func, 
             "question": RunnablePassthrough()
         }
         | prompt
@@ -83,18 +91,8 @@ def query_documents(query: str):
     print("\nAnswer:")
     print(answer)
     
-    # Also show the retrieved documents
-    print("\nRelevant Documents:")
-    retrieved_docs = setup_retriever().get_relevant_documents(query)
-    for i, doc_bytes in enumerate(retrieved_docs, 1):
-        if isinstance(doc_bytes, bytes):
-            doc = deserialize_document(doc_bytes.decode())
-        else:
-            doc = doc_bytes
-        print(f"\nDocument {i}:")
-        print(doc.page_content[:200] + "...")
-    
-    return answer, retrieved_docs
+    return answer
+
 
 def main():
     """Main function with command line argument handling"""
