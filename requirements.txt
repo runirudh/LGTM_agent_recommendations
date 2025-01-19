@@ -8,3 +8,6 @@ langsmith==0.2.11
 bs4==0.0.2
 redis==5.2.1
 tenacity>=8.2.0
+openai==1.59.8
+chromadb==0.5.23
+pydantic==2.10.5
